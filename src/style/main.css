@@ -16,24 +16,30 @@
 .App {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
 }
 
 .navbar {
   flex-basis: 100%;
   background-color: var(--main-color);
-  padding: 15px 2rem;
   display: flex;
   justify-content: space-between;
   position: fixed;
   width: 100%;
   z-index: 9;
   margin-bottom: 20px;
+  align-items: center;
+  padding: 0 15px;
 }
 
 .navbar .logo {
   color: #fff;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+button {
+  border-radius: 10px;
 }
 
 .btn {
@@ -91,7 +97,7 @@ main {
 }
 
 .product p {
-  font-size: 20px;
+  font-size: 17px;
 }
 
 .product > * {
@@ -121,7 +127,7 @@ main {
 
 .buttons {
   position: absolute;
-  top: 231px;
+  top: 230px;
   left: 60px;
   width: 100%;
   height: 100%;
@@ -139,7 +145,6 @@ main {
   margin-right: 1rem;
   background-color: #dddddd;
   padding: 10px 20px;
-  width: 27%;
   font-size: 1rem;
   border-radius: 8px;
 }

@@ -3,7 +3,7 @@ import "./style/main.css";
 import { BsCartPlus, BsCart3 } from "react-icons/bs";
 import ShoppingCart from "./components/ShoppingCart";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import CheckOut from "./components/CheckOut";
+import Bill from "./components/Bill";
 
 const products = [
   {
@@ -24,7 +24,7 @@ const products = [
   },
   {
     id: 3,
-    name: "SamSung",
+    name: "SamSung Watch",
     description:
       "There are lots of great options for purchasing . Whether you buy from a retailer, a carrier, or online, finding the best option has never been so easy.",
     price: 99,
@@ -40,7 +40,7 @@ const products = [
   },
   {
     id: 5,
-    name: "Huwei P30",
+    name: "Samsung s20",
     description:
       "There are lots of great options for purchasing . Whether you buy from a retailer, a carrier, or online, finding the best option has never been so easy.",
     price: 85,
@@ -57,10 +57,10 @@ const products = [
 ];
 
 function App() {
-  const [cartsVisibilty, setCartVisible] = useState(false);
   const [productsInCart, setProducts] = useState(
     JSON.parse(localStorage.getItem("shopping-cart")) || []
   );
+  const [checkbox, setCheckbox] = useState([]);
 
   useEffect(() => {
     localStorage.setItem("shopping-cart", JSON.stringify(productsInCart));
@@ -77,7 +77,6 @@ function App() {
   const onQuantityChange = (productId, count) => {
     setProducts((oldState) => {
       const productsIndex = oldState.findIndex((item) => item.id === productId);
-      console.log(productsIndex);
       if (productsIndex !== -1) {
         oldState[productsIndex].count = count;
       }
@@ -97,6 +96,16 @@ function App() {
     });
   };
 
+  const handleCheck = (event) => {
+    let updatedList = [...checkbox];
+    if (event.target.checked) {
+      updatedList = [...checkbox, JSON.parse(event.target.value)];
+    } else {
+      updatedList.splice(checkbox.indexOf(JSON.parse(event.target.value)), 1);
+    }
+    setCheckbox(updatedList);
+  };
+
   const productRomoveDup = productsInCart.reduce((finalArray, current) => {
     let obj = finalArray.find((item) => item.id === current.id);
     if (obj) {
@@ -110,23 +119,14 @@ function App() {
       <Switch>
         <Route exact path="/">
           <div className="App">
-            <ShoppingCart
-              visibilty={cartsVisibilty}
-              products={productRomoveDup}
-              onClose={() => setCartVisible(false)}
-              onQuantityChange={onQuantityChange}
-              onProductRemove={onProductRemove}
-            />
-
             <div className="navbar">
               <Link to="/">
                 <h3 className="logo">Logo</h3>
               </Link>
-              <button
-                className="btn shopping-cart-btn"
-                onClick={() => setCartVisible(true)}
-              >
-                <BsCart3 size={24} />
+              <button className="btn shopping-cart-btn">
+                <Link to="/cart">
+                  <BsCart3 size={24} />
+                </Link>
                 {productsInCart.length > 0 && (
                   <span className="product-count">
                     {productRomoveDup.length}
@@ -148,12 +148,7 @@ function App() {
                     <p>{product.description}</p>
                     <span className="product-price">{product.price}$</span>
                     <div className="buttons">
-                      <button
-                        className="btn"
-                        onClick={() => setCartVisible(true)}
-                      >
-                        Buy Now
-                      </button>
+                      <button className="btn">Buy Now</button>
                       <button
                         className="btn"
                         onClick={() => addProductToCart(product)}
@@ -168,7 +163,16 @@ function App() {
           </div>
         </Route>
         <Route path="/checkout">
-          <CheckOut productRomoveDup={productRomoveDup} />
+          <Bill products={checkbox} />
+        </Route>
+        <Route path="/cart">
+          <ShoppingCart
+            products={productRomoveDup}
+            onQuantityChange={onQuantityChange}
+            onProductRemove={onProductRemove}
+            checkbox={checkbox}
+            handleCheck={handleCheck}
+          />
         </Route>
       </Switch>
     </Router>
